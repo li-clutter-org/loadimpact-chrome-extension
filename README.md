@@ -12,6 +12,9 @@ Install dependencies:
 ```
 npm install
 ```
+```
+bower install
+```
 
 Build extension:
 
