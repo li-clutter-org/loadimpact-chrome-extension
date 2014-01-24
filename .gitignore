@@ -1,0 +1,10 @@
+app/lib
+app/templates/compiled.js
+node_modules
+temp
+.tmp
+dev
+dist
+app/bower_components
+test/bower_components
+package

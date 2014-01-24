@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <h3>Options</h3>
+
+            <div id="success-alert" class="hidden alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Saved!</strong> Options have been saved successfully.
+            </div>
+
+            <div id="messages" class="hidden"></div>
+
+            <form id="options-form" role="form">
+                <div class="form-group">
+                    <label>API base URL</label>
+                    {{input value=apiUrl class="form-control"}}
+                </div>
+                <div class="form-group">
+                    <label>API token</label>
+                    {{input value=apiToken class="form-control"}}
+                </div>
+                <div class="form-group">
+                    <label>URL include patterns</label>
+                    {{textarea value=urlIncludePatterns rows="5" class="form-control"}}
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary" {{action "saveOptions"}}>Save</button>
+            </form>
+        </div>
+    </div>
+</div>

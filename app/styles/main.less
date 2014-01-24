@@ -1,0 +1,123 @@
+@import "../lib/bootstrap/less/bootstrap.less";
+
+// Scaffolding
+@text-color: #444;
+
+// Typography
+@font-family-base: "Open Sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif;
+@font-size-base: 13px;
+@headings-font-family: "Whitney Book","Myriad Pro",Arial,Helvetica,sans-serif;
+
+// Links
+@link-color: #e25500;
+
+// Buttons
+@btn-primary-bg: #fa9222;
+
+// Navbar
+@navbar-height: 50px;
+@navbar-default-bg-highlight: #196630;
+@navbar-default-bg: #004811;
+@navbar-default-color: #fff;
+@navbar-default-link-color: #fff;
+@navbar-default-link-hover-color: #ddd;
+@navbar-default-link-active-color: #fff;
+
+// Grid
+@grid-gutter-width: 0px;
+
+// Wells
+@well-bg: #fafafa;
+
+// Jumbotron
+@jumbotron-bg: #6bad2c;
+@jumbotron-color: #fff;
+
+
+body {
+    position: relative;
+    min-width: 300px;
+    padding: 50px 10px 10px 10px;
+}
+
+.navbar-fixed-top {
+    #gradient > .vertical(@navbar-default-bg-highlight, @navbar-default-bg);
+
+    .navbar-brand {
+        padding: 8px 20px;
+
+        img {
+            vertical-align: middle;
+        }
+    }
+
+    .divider-vertical {
+        width: 12px;
+        background: url(../images/navbar_vdivider.png) top left no-repeat;
+        border: 0;
+        margin: 0 3px;
+    }
+
+    .main-site {
+        color: #7c9e15;
+        font-family: 'Reenie Beanie', cursive;
+        font-size: 22px;
+    }
+}
+
+/*
+ * Workaround for Chrome Extension focus bug.
+ * https://code.google.com/p/chromium/issues/detail?id=111660
+ *
+ * The bug causes an element to be focused, so we counter that by disabling
+ * the focus outline on that element. (Use id to override bootstraps layout.)
+ */
+#unfocus-me {
+    outline: 0;
+}
+
+.panel-group .panel-options {
+    margin-bottom: 20px;
+}
+
+.btn-wide {
+    width: 280px;
+}
+
+/** LUA theme */
+.cm-s-default span.cm-comment {
+    color: #aa8866;
+}
+.cm-s-default span.cm-keyword {
+    color: blue;
+    font-weight: bold;
+}
+.cm-s-default span.cm-string {
+    color: #aa2222;
+}
+.cm-s-default span.cm-builtin {
+    color: #007777;
+    font-weight: bold;
+}
+.cm-s-default span.cm-special {
+    color: #708;
+}
+.cm-s-default span.cm-variable {
+    color: black;
+}
+.cm-s-default span.cm-number, .cm-s-default span.cm-atom {
+    color: #33aa33;
+}
+.cm-s-default span.cm-meta {
+    color: #555555;
+}
+
+.activeline {background: #e1f5ff !important;}
+.errorline {background: #FDD !important;}
+.error-bullet { color: red; cursor: pointer; }
+
+.CodeMirror {
+    border: 1px solid;
+    border-color: #e6e6e6 #ccc #ccc #e6e6e6;
+    border-radius: 4;
+}
