@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Preview recorded user scenario</h3>
+
+            <div id="success" class="hidden">
+                <div class="alert alert-info">
+                    <strong>Success!</strong> User scenario has been saved to your account at loadimpact.com.
+                </div>
+                <button type="button" class="btn btn-success btn-lg" {{action continueEditingOnSite}}>Continue editing at loadimpact.com</button>
+            </div>
+
+            {{#if errorMsg}}
+                <div class="alert alert-danger">
+                    <strong>Failed!</strong> {{errorMsg}}
+                </div>
+            {{/if}}
+
+            <form id="editor-form" role="form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" id="name" placeholder="User scenario name"/>
+                </div>
+                <div class="form-group">
+                    <label for="load-script">Load script</label>
+                    <textarea rows="15" class="form-control" id="load-script"></textarea>
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary" {{action save}}>Save user scenario to loadimpact.com</button>
+            </form>
+        </div>
+    </div>
+</div>

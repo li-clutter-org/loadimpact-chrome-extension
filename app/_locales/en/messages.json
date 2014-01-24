@@ -1,0 +1,14 @@
+{
+    "appName": {
+        "message": "Load Impact User Scenario Recorder",
+        "description": "The name of the application"
+    },
+    "appShortName": {
+        "message": "Load Impact Recorder",
+        "description": "The short name of the application"
+    },
+    "appDescription": {
+        "message": "Record user scenario sessions right from the browser, automatically uploaded to your Load Impact account.",
+        "description": "The description of the application"
+    }
+}
