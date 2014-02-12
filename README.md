@@ -22,8 +22,9 @@ Build extension:
 grunt build
 ```
 
-"build" is the default task, so it's perfectly fine to omit it. The ouput will be a zip-file in the "package/" 
-directory. This zip-file is what is uploaded to the Chrome Web Store.
+"build" is the default task, so it's perfectly fine to omit it when running the command. 
+The ouput will be a zip-file in the "package/" directory. This zip-file is what 
+is uploaded to the Chrome Web Store.
 
 
 ## Developing

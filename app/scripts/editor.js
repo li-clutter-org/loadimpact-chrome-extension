@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Load Impact
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 require('app/scripts/application');
 require('app/templates/compiled');
 require('app/lib/bootstrap/alert');
@@ -12,6 +28,8 @@ var STATUS_CODE_TO_ERROR_MESSAGE = {
     429: 'You have made too many requests to the Load Impact API, please try again in a few minutes.'
 };
 
+window.continueEditingOnSite = false;
+
 LI.Router.map(function() {
     this.route('editor');
 });
@@ -24,8 +42,6 @@ LI.IndexRoute = Ember.Route.extend({
 
 LI.EditorRoute = Ember.Route.extend({
     model: function () {
-        TEST_1234 = 2;
-        TEST_5678 = 2;
         return this.get('store').find('options', 1);
     },
 
@@ -51,7 +67,7 @@ LI.EditorController = Ember.ObjectController.extend({
                 dataType: 'json',
                 data: JSON.stringify({
                     name: $('#name').val(),
-                    load_script: $('#load-script').val()
+                    load_script: window.Editor.getValue()
                 }),
                 success: function(data, textStatus, jqXHR) {
                     $('#editor-form').hide();
@@ -102,6 +118,7 @@ LI.EditorController = Ember.ObjectController.extend({
         },
 
         continueEditingOnSite: function() {
+            window.continueEditingOnSite = true;
             window.location.href = ('https://loadimpact.com/test/user-scenario/list?s=' +
                                     this.get('savedUserScenarioId'));
         }
@@ -114,7 +131,6 @@ LI.EditorView = Ember.View.extend({
             'type': 'get-last-recorded-script',
         };
         chrome.extension.sendRequest(msg, function(response) {
-            console.log(response.loadScript);
             $('#name').val('Recorded (' + (new Date()).toString() + ')');
             var textarea = $('#load-script');
             textarea.val(response.loadScript);
@@ -132,7 +148,7 @@ LI.EditorView = Ember.View.extend({
  * If the editor has any content, prompt the user before navigating to another page.
  */
 window.onbeforeunload = function() {
-    if (window.Editor.getValue()) {
+    if (window.Editor.getValue() && !window.continueEditingOnSite) {
         return "The recorded scenario will be lost if you navigate to another page.";
     }
 };
