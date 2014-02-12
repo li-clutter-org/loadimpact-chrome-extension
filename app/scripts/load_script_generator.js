@@ -57,12 +57,12 @@ window.LI = window.LI || {};
                 // Close page, if open.
                 if (0 < pages) {
                     ir.push(['pageEnd', 'Page ' + pages]);
-                    var sleep = Math.round((time - lastUrlTime) / 1000),
-                        ms100s = ((time - lastUrlTime) - ((time - lastUrlTime) % 100)) / 100;
+                    var fracSleep = (time - lastUrlTime) / 1000,
+                        sleep = Math.round(fracSleep);
                     if (sleep > 0) {
                         ir.push(['sleep', sleep]);
-                    } else if (ms100s >= 100) {
-                        ir.push(['sleep', (sleep / 1000.0).toFixed(2)]);
+                    } else if (fracSleep >= 0.1) {
+                        ir.push(['sleep', fracSleep.toFixed(2)]);
                     }
                     pageOpen = false;
                 }
@@ -91,6 +91,7 @@ window.LI = window.LI || {};
                     batch = [transaction];
                 }
             }
+
             lastUrlTime = time;
         });
 
@@ -206,14 +207,15 @@ window.LI = window.LI || {};
                         bodyMethods = ['POST', 'PUT'],
                         body = transaction.requestBody,
                         contentType = self._getRequestContentType(transaction),
-                        base64ContentTypes = ['multipart/form-data',
-                                              'application/x-amf'],
+                        base64ContentTypes = ['multipart/form-data', 'application/x-amf'],
                         requestIR = [method, transaction.url];
 
                     // Add X-headers.
                     if (transaction.requestHeaders) {
                         transaction.requestHeaders.forEach(function(header) {
                             if (0 === header.name.indexOf('X-')) {
+                                headers[header.name] = header.value;
+                            } else if (0 === header.name.indexOf('Authorization')) {
                                 headers[header.name] = header.value;
                             }
                         });
