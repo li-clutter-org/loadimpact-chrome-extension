@@ -37,12 +37,13 @@ window.LI = window.LI || {};
             request = null,
             method = null,
             body = null;
+
         for (var reqId in this.requests) {
             request = this.requests[reqId];
             method = request.method.toUpperCase();
             body = null;
 
-            if (-1 !== $.inArray(method, ['POST', 'PUT'])) {
+            if (request.requestBody) {
                 if (request.requestBody.formData) {
                     body = request.requestBody.formData;
                 } else {
@@ -60,6 +61,7 @@ window.LI = window.LI || {};
                 'responseHeaders': request.responseHeaders
             });
         }
+
         return transactions;
     };
 
