@@ -28,6 +28,8 @@ var STATUS_CODE_TO_ERROR_MESSAGE = {
     429: 'You have made too many requests to the Load Impact API, please try again in a few minutes.'
 };
 
+window.continueEditingOnSite = false;
+
 LI.Router.map(function() {
     this.route('editor');
 });
@@ -67,7 +69,7 @@ LI.EditorController = Ember.ObjectController.extend({
                 dataType: 'json',
                 data: JSON.stringify({
                     name: $('#name').val(),
-                    load_script: $('#load-script').val()
+                    load_script: window.Editor.getValue()
                 }),
                 success: function(data, textStatus, jqXHR) {
                     $('#editor-form').hide();
@@ -118,6 +120,7 @@ LI.EditorController = Ember.ObjectController.extend({
         },
 
         continueEditingOnSite: function() {
+            window.continueEditingOnSite = true;
             window.location.href = ('https://loadimpact.com/test/user-scenario/list?s=' +
                                     this.get('savedUserScenarioId'));
         }
@@ -130,7 +133,6 @@ LI.EditorView = Ember.View.extend({
             'type': 'get-last-recorded-script',
         };
         chrome.extension.sendRequest(msg, function(response) {
-            console.log(response.loadScript);
             $('#name').val('Recorded (' + (new Date()).toString() + ')');
             var textarea = $('#load-script');
             textarea.val(response.loadScript);
@@ -148,7 +150,7 @@ LI.EditorView = Ember.View.extend({
  * If the editor has any content, prompt the user before navigating to another page.
  */
 window.onbeforeunload = function() {
-    if (window.Editor.getValue()) {
+    if (window.Editor.getValue() && !window.continueEditingOnSite) {
         return "The recorded scenario will be lost if you navigate to another page.";
     }
 };
