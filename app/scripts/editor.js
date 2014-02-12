@@ -42,8 +42,6 @@ LI.IndexRoute = Ember.Route.extend({
 
 LI.EditorRoute = Ember.Route.extend({
     model: function () {
-        TEST_1234 = 2;
-        TEST_5678 = 2;
         return this.get('store').find('options', 1);
     },
 
