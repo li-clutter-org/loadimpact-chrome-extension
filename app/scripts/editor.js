@@ -119,8 +119,7 @@ LI.EditorController = Ember.ObjectController.extend({
 
         continueEditingOnSite: function() {
             window.continueEditingOnSite = true;
-            window.location.href = ('https://loadimpact.com/test/user-scenario/list?s=' +
-                                    this.get('savedUserScenarioId'));
+            window.location.href = ('https://app.loadimpact.com/user-scenarios/' +this.get('savedUserScenarioId'));
         }
     },
 });
