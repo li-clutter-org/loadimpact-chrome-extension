@@ -48,7 +48,7 @@ LI.PopupController = Ember.ObjectController.extend({
 
     actions: {
         goToAccount: function() {
-            chrome.tabs.create({ url: 'https://loadimpact.com/account' }); 
+            chrome.tabs.create({ url: 'https://loadimpact.com/account/api-token' }); 
         },
 
         pause: function() {
