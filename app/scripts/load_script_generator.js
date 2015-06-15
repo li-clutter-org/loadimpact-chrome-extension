@@ -204,10 +204,14 @@ window.LI = window.LI || {};
                 node[1].forEach(function(transaction) {
                     var method = transaction.method.toUpperCase(),
                         headers = {},
-                        bodyMethods = ['POST', 'PUT'],
+                        bodyMethods = ['POST', 'PUT', 'PATCH'],
                         body = transaction.requestBody,
                         contentType = self._getRequestContentType(transaction),
-                        base64ContentTypes = ['multipart/form-data', 'application/x-amf'],
+                        base64ContentTypes = ['multipart/form-data',
+                                              'application/x-amf',
+                                              'application/octet-stream',
+                                              'image/tiff',
+                                              'image/gif'],
                         requestIR = [method, transaction.url];
 
                     // Add X-headers.
@@ -236,6 +240,8 @@ window.LI = window.LI || {};
                         requestIR.push(['headers', headers]);
 
                         if (shouldBase64Body) {
+                            // check here whene pushing data
+                            // 
                             requestIR.push(['data', '"' + btoa(body[0].bytes) + '"']);
                             requestIR.push(['base64_encoded_body', 'true']);
                         } else {
