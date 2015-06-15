@@ -226,28 +226,37 @@ window.LI = window.LI || {};
                     }
 
                     // Handle request body.
-                    if (transaction.requestBody && transaction.requestBody !== '') {
-                        var shouldBase64Body = false;
-                        if ($.inArray(method, bodyMethods) &&
-                            '' !== contentType &&
-                            $.inArray(contentType, base64ContentTypes)) {
-                            shouldBase64Body = true;
-                        } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
-                            shouldBase64Body = true;
-                        }
+                    if (body && body !== '') {
 
                         headers['Content-Type'] = contentType;
                         requestIR.push(['headers', headers]);
 
+
+                        var shouldBase64Body = false;
+                        var isArrayBuffer = (body instanceof Array &&
+                                             body[0] && body[0].bytes &&
+                                             body[0].bytes instanceof ArrayBuffer);
+
+
+                        if (!isArrayBuffer) {
+                          if ($.inArray(method, bodyMethods) &&
+                              '' !== contentType &&
+                              $.inArray(contentType, base64ContentTypes)) {
+                              shouldBase64Body = true;
+                          } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
+                              shouldBase64Body = true;
+                          }
+                        }
+
+
                         if (shouldBase64Body) {
-                            // check here whene pushing data
-                            // 
                             requestIR.push(['data', '"' + btoa(body[0].bytes) + '"']);
                             requestIR.push(['base64_encoded_body', 'true']);
                         } else {
                             if ($.isPlainObject(body)) {
                                 requestIR.push(['data', '"' + self._convertFormDataToBodyData(body) + '"']);
                             } else {
+                                // serialize ArrayBuffer with Uint16Array fails
                                 var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
                                 requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
                             }
