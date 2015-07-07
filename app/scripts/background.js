@@ -78,8 +78,7 @@ function onRequest(request, sender, sendResponse) {
             recorder.getEndTime());
         LI.setLastRecordedScript(loadScript);
 
-        chrome.tabs.create({'url': 'editor.html', 'active': true, 'openerTabId': tabId},
-                           function(tab) {});
+        chrome.tabs.create({'url': 'editor.html', 'active': true, 'openerTabId': tabId}, function(tab) {});
 
         /**
          * Empty the recorder so a new one can be started without the
