@@ -62,9 +62,11 @@ function onRequest(request, sender, sendResponse) {
                     'unprotectedWeb': true
                 }
             }, function() {
+                recorder.reset();
                 recorder.start(tabId, request.urlIncludePatterns);
             });
         } else {
+            recorder.reset();
             recorder.start(tabId, request.urlIncludePatterns);
         }
     } else if ('stop-recording' === request.type) {
