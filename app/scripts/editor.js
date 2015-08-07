@@ -62,6 +62,7 @@ LI.EditorController = Ember.ObjectController.extend({
                 url: this.get('apiUrl') + 'user-scenarios/',
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader('Authorization', 'Basic ' + btoa(self.get('apiToken') + ':'));
+                    xhr.setRequestHeader('X-Load-Impact-Agent', 'LoadImpactChromePlugin');
                 },
                 contentType: 'application/json; charset=UTF-8',
                 dataType: 'json',
