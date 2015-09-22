@@ -271,9 +271,10 @@ window.LI = window.LI || {};
                             if ($.isPlainObject(body)) {
                                 requestIR.push(['data', '"' + self._convertFormDataToBodyData(body) + '"']);
                             } else {
-                                // serialize ArrayBuffer with Uint16Array fails
-                                var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
-                                requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
+                                if (body && body[0] && body[0].bytes) {
+                                  var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
+                                  requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
+                                }
                             }
                         }
                     } else if (Object.keys(headers).length) {
