@@ -112,7 +112,7 @@ window.LI = window.LI || {};
     LI.LoadScriptGenerator.prototype._convertFormDataToBodyData = function(formData) {
         var params = [];
         Object.keys(formData).forEach(function(key) {
-            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(formData[key][0]));
+            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(formData[key][0]).replace(new RegExp('%20', 'g'), '+'));
         });
         return params.join('&');
     };
