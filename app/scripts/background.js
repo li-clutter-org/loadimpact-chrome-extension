@@ -62,9 +62,11 @@ function onRequest(request, sender, sendResponse) {
                     'unprotectedWeb': true
                 }
             }, function() {
+                recorder.resetRecorder();
                 recorder.start(tabId, request.urlIncludePatterns);
             });
         } else {
+            recorder.resetRecorder();
             recorder.start(tabId, request.urlIncludePatterns);
         }
     } else if ('stop-recording' === request.type) {
@@ -78,18 +80,17 @@ function onRequest(request, sender, sendResponse) {
             recorder.getEndTime());
         LI.setLastRecordedScript(loadScript);
 
-        chrome.tabs.create({'url': 'editor.html', 'active': true, 'openerTabId': tabId},
-                           function(tab) {});
+        chrome.tabs.create({'url': 'editor.html', 'active': true, 'openerTabId': tabId}, function(tab) {});
 
         /**
          * Empty the recorder so a new one can be started without the
          * current content.
          */
-        recorder.reset();
+        recorder.resetRecorder();
     } else if ('pause-recording' === request.type) {
         recorder.pause(request.tabId);
     } else if ('reset-recording' === request.type) {
-        recorder.reset();
+        recorder.resetRecorder();
     } else if ('pause-recording' === request.type) {
         recorder.pause(request.tabId);
     } else if ('get-last-recorded-script' === request.type) {

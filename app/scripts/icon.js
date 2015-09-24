@@ -36,6 +36,7 @@ window.LI = window.LI || {};
     };
 
     LI.Icon.prototype.setRecordingIcon = function(tabId) {
+
         this.recordingTab = tabId;
 
         var self = this,
@@ -88,12 +89,24 @@ window.LI = window.LI || {};
             }
         }
 
+        // otherwise multiple callbacks may be executed simultaneously
+        this._clearRecordingTimeout();
         toggleIcon();
     };
 
-    LI.Icon.prototype.setNotRecordingIcon = function(tabId) {
-        this.recordingTab = null;
+    LI.Icon.prototype._clearRecordingTimeout = function() {
+
+      if (this.recordingTimer) {
         window.clearTimeout(this.recordingTimer);
+        this.recordingTimer = null;
+      }
+
+    };
+
+    LI.Icon.prototype.setNotRecordingIcon = function(tabId) {
+
+        this.recordingTab = null;
+        this._clearRecordingTimeout();
 
         var icon = {
             tabId: tabId,

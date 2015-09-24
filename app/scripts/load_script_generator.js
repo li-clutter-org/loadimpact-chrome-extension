@@ -112,7 +112,7 @@ window.LI = window.LI || {};
     LI.LoadScriptGenerator.prototype._convertFormDataToBodyData = function(formData) {
         var params = [];
         Object.keys(formData).forEach(function(key) {
-            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(formData[key][0]));
+            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(formData[key][0]).replace(new RegExp('%20', 'g'), '+'));
         });
         return params.join('&');
     };
@@ -204,10 +204,29 @@ window.LI = window.LI || {};
                 node[1].forEach(function(transaction) {
                     var method = transaction.method.toUpperCase(),
                         headers = {},
-                        bodyMethods = ['POST', 'PUT'],
+                        bodyMethods = ['POST', 'PUT', 'PATCH'],
                         body = transaction.requestBody,
                         contentType = self._getRequestContentType(transaction),
-                        base64ContentTypes = ['multipart/form-data', 'application/x-amf'],
+                        base64ContentTypes = ['application/octet-stream',
+                                              'application/pdf',
+                                              'application/x-amf',
+                                              'application/x-compress',
+                                              'application/x-compressed',
+                                              'application/x-shockwave-flash',
+                                              'application/x-zip-compressed',
+                                              'application/zip',
+                                              'audio/mpeg3',
+                                              'audio/x-mpeg-3',
+                                              'audio/wav',
+                                              'audio/x-wav',
+                                              'image/bmp',
+                                              'image/x-windows-bmp',
+                                              'image/gif',
+                                              'image/jpeg',
+                                              'image/pjpeg',
+                                              'image/png',
+                                              'image/tiff',
+                                              'multipart/form-data'],
                         requestIR = [method, transaction.url];
 
                     // Add X-headers.
@@ -222,18 +241,28 @@ window.LI = window.LI || {};
                     }
 
                     // Handle request body.
-                    if (transaction.requestBody && transaction.requestBody !== '') {
-                        var shouldBase64Body = false;
-                        if ($.inArray(method, bodyMethods) &&
-                            '' !== contentType &&
-                            $.inArray(contentType, base64ContentTypes)) {
-                            shouldBase64Body = true;
-                        } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
-                            shouldBase64Body = true;
-                        }
+                    if (body && body !== '') {
 
                         headers['Content-Type'] = contentType;
                         requestIR.push(['headers', headers]);
+
+
+                        var shouldBase64Body = false;
+                        var isArrayBuffer = (body instanceof Array &&
+                                             body[0] && body[0].bytes &&
+                                             body[0].bytes instanceof ArrayBuffer);
+
+
+                        if (!isArrayBuffer) {
+                          if ($.inArray(method, bodyMethods) &&
+                              '' !== contentType &&
+                              $.inArray(contentType, base64ContentTypes)) {
+                              shouldBase64Body = true;
+                          } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
+                              shouldBase64Body = true;
+                          }
+                        }
+
 
                         if (shouldBase64Body) {
                             requestIR.push(['data', '"' + btoa(body[0].bytes) + '"']);
@@ -242,8 +271,10 @@ window.LI = window.LI || {};
                             if ($.isPlainObject(body)) {
                                 requestIR.push(['data', '"' + self._convertFormDataToBodyData(body) + '"']);
                             } else {
-                                var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
-                                requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
+                                if (body && body[0] && body[0].bytes) {
+                                  var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
+                                  requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
+                                }
                             }
                         }
                     } else if (Object.keys(headers).length) {

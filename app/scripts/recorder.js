@@ -86,7 +86,7 @@ window.LI = window.LI || {};
         this.recording = false;
     };
 
-    LI.Recorder.prototype.reset = function() {
+    LI.Recorder.prototype.resetRecorder = function() {
         this.requests = {};
         this.startTime = 0;
         this.endTime = 0;
