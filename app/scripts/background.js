@@ -80,7 +80,14 @@ function onRequest(request, sender, sendResponse) {
             recorder.getEndTime());
         LI.setLastRecordedScript(loadScript);
 
-        chrome.tabs.create({'url': 'editor.html', 'active': true, 'openerTabId': tabId}, function(tab) {});
+        var url;
+        if (!url) {
+          //TODO: fetch from optionModel.appUrl
+          //url = 'http://appdev.loadimpact.com:9000/';
+          url = 'https://app.loadimpact.com';
+        }
+        url = url.replace(/\/$/, '');
+        chrome.tabs.create({url: url+'/api/chrome'});
 
         /**
          * Empty the recorder so a new one can be started without the
@@ -128,6 +135,14 @@ chrome.extension.onRequest.addListener(onRequest);
 
 // Listen for tab close events.
 chrome.tabs.onRemoved.addListener(onTabClose);
+
+chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
+  var data = {
+    success: true,
+    script: LI.getLastRecordedScript()
+  };
+  sendResponse(data);
+});
 
 // Listen for installation events.
 chrome.runtime.onInstalled.addListener(function (details) {

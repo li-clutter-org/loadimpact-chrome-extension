@@ -36,17 +36,16 @@ LI.ApplicationAdapter = LI.LSAdapter;
 
 LI.ApplicationRoute = Ember.Route.extend({
     model: function() {
-        var store = this.get('store');
-        store.find('options').then(function(options) {
-            if (!options.get('content.length')) {
-                store.push('options', {
-                    id: 1,
-                    apiToken: '',
-                    apiUrl: 'https://api.loadimpact.com/v2/',
-                    urlIncludePatterns: 'http://*/*, https://*/*'
-                });
-            }
-        });
+      var store = this.get('store');
+      store.find('options').then(function(options) {
+          if (!options.get('content.length')) {
+              store.push('options', {
+                  id: 1,
+                  appUrl: 'https://app.loadimpact.com',
+                  urlIncludePatterns: 'http://*/*, https://*/*'
+              });
+          }
+      });
     }
 });
 
