@@ -1,7 +1,7 @@
 {
     "name": "__MSG_appName__",
     "short_name": "__MSG_appShortName__",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
     "homepage_url": "https://loadimpact.com/",
@@ -26,6 +26,9 @@
         "default_popup": "popup.html"
     },
     "options_page": "options.html",
+    "externally_connectable": {
+      "matches": ["*://*.loadimpact.com/*"]
+    },
     "permissions": [
         "browsingData",
         "http://*/*",

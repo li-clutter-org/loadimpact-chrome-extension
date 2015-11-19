@@ -1,3 +1,6 @@
+
+- [feat] After stop recording, open a tab to redirect the user into the app to save the script
+
 ### 1.0.7-150924
 - [fix] LoadScriptGenerator does not encode empty body
 - [fix] Fix encoding of formdata fields to be compliant with HTML spec

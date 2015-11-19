@@ -1,84 +1,68 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            {{#if apiToken}}
-                <div>
-                    <h3>User Scenario Recorder</h3>
+            <div>
+                <h3>User Scenario Recorder</h3>
 
-                    <div id="success" class="alert alert-success hidden">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <strong>Thank you!</strong> You can now start recording.
-                    </div>
+                <div id="success" class="alert alert-success hidden">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Thank you!</strong> You can now start recording.
+                </div>
 
-                    {{#if recordingInAnotherTab}}
-                        <div class="alert alert-info"><strong>Already recording!</strong> You are already recording in another tab. You need to stop that recording in order to start a new one.</div>
-                    {{else}}
-                        <div>
-                            {{#if recording}}
-                                <div class="alert alert-info">
-                                    <strong>You're now recording!</strong> Everything happening in this tab will now be recorded until you stop or pause the recording.
-                                </div>
+                {{#if recordingInAnotherTab}}
+                    <div class="alert alert-info"><strong>Already recording!</strong> You are already recording in another tab. You need to stop that recording in order to start a new one.</div>
+                {{else}}
+                    <div>
+                        {{#if recording}}
+                            <div class="alert alert-info">
+                                <strong>You're now recording!</strong> Everything happening in this tab will now be recorded until you stop or pause the recording.
+                            </div>
 
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-lg btn-danger" {{action toggleRecording}}>
-                                        {{#if paused}}
-                                            <span><span class="glyphicon glyphicon-record"></span> Resume</span>
-                                        {{else}}
-                                            <span><span class="glyphicon glyphicon-stop"></span> Stop</span>
-                                        {{/if}}
-                                    </button>
-                                    <button type="button" class="btn btn-lg btn-default" {{action pause}}><span class="glyphicon glyphicon-pause"></span></button>
-                                    <button type="button" class="btn btn-lg btn-default" {{action reset}}><span class="glyphicon glyphicon-ban-circle"></span> Reset</button>
-                                </div>
-                            {{else}}
-                                <div class="panel-group" id="accordion">
-                                    <div class="panel panel-default panel-options">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse-options"><span class="glyphicon glyphicon-cog"></span> Options</a>
-                                            </h4>
-                                        </div>
-                                        <div id="collapse-options" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <div class="form-group">
-                                                    <label>URL include patterns</label>
-                                                    {{textarea value=urlIncludePatterns rows="5" class="form-control"}}
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="checkbox">
-                                                        <label>
-                                                            <input type="checkbox" id="clear-cache" checked="checked">
-                                                            Clear cache (last 7 days)
-                                                        </label>
-                                                    </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-lg btn-danger" {{action toggleRecording}}>
+                                    {{#if paused}}
+                                        <span><span class="glyphicon glyphicon-record"></span> Resume</span>
+                                    {{else}}
+                                        <span><span class="glyphicon glyphicon-stop"></span> Stop</span>
+                                    {{/if}}
+                                </button>
+                                <button type="button" class="btn btn-lg btn-default" {{action pause}}><span class="glyphicon glyphicon-pause"></span></button>
+                                <button type="button" class="btn btn-lg btn-default" {{action reset}}><span class="glyphicon glyphicon-ban-circle"></span> Reset</button>
+                            </div>
+                        {{else}}
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default panel-options">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse-options"><span class="glyphicon glyphicon-cog"></span> Options</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse-options" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <div class="form-group">
+                                                <label>URL include patterns</label>
+                                                {{textarea value=urlIncludePatterns rows="5" class="form-control"}}
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" id="clear-cache" checked="checked">
+                                                        Clear cache (last 7 days)
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-lg btn-danger btn-wide" {{action toggleRecording}}><span class="glyphicon glyphicon-record"></span> Start recording</span></button>
-                                </div>
-                            {{/if}}
-                        </div>
-                    {{/if}}
-                </div>
-            {{else}}
-                <div>
-                    <h3>User Scenario Recorder</h3>
-
-                    <div id="welcome-text" class="alert alert-info"><strong>Hello!</strong> Before you can start recording you need to enter <a href="https://loadimpact.com/account" {{action goToAccount}}>your Load Impact API key</a> below.
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-lg btn-danger btn-wide" {{action toggleRecording}}><span class="glyphicon glyphicon-record"></span> Start recording</span></button>
+                            </div>
+                        {{/if}}
                     </div>
-
-                    <form class="form" role="form">
-                        <div class="form-group">
-                            <input id="api-token" class="form-control" placeholder="API token">
-                        </div>
-                        <button type="submit" class="btn btn-lg btn-default btn-primary" {{action "saveToken"}}>Save</button>
-                    </form>
-                </div>
-            {{/if}}
+                {{/if}}
+            </div>
         </div>
     </div>
 </div>
