@@ -1,4 +1,4 @@
-
+- [feat] Skip `X-DevTools-Emulate-Network-Conditions-Client-Id` http header
 - [feat] After stop recording, open a tab to redirect the user into the app to save the script
 
 ### 1.0.7-150924
