@@ -232,10 +232,13 @@ window.LI = window.LI || {};
                     // Add X-headers.
                     if (transaction.requestHeaders) {
                         transaction.requestHeaders.forEach(function(header) {
-                            if (0 === header.name.indexOf('X-')) {
-                                headers[header.name] = header.value;
-                            } else if (0 === header.name.indexOf('Authorization')) {
-                                headers[header.name] = header.value;
+
+                            if (-1 === header.name.indexOf('X-DevTools-Emulate-Network-Conditions-Client-Id')) {
+                              if (0 === header.name.indexOf('X-')) {
+                                  headers[header.name] = header.value;
+                              } else if (0 === header.name.indexOf('Authorization')) {
+                                  headers[header.name] = header.value;
+                              }
                             }
                         });
                     }
