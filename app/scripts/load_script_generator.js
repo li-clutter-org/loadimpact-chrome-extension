@@ -23,6 +23,10 @@ window.LI = window.LI || {};
     var BATCH_THRESHOLD = 3000;
     var PAGE_MATCH_THRESHOLD = 1000;
 
+    var escapeContent = function(input) {
+      return input && input.replace(/"/g, '\\\"').replace(/[\r\n]/g, "");
+    };
+
     LI.LoadScriptGenerator = function() {
         this.lastPage = 0;
     };
@@ -204,6 +208,7 @@ window.LI = window.LI || {};
                 node[1].forEach(function(transaction) {
                     var method = transaction.method.toUpperCase(),
                         headers = {},
+                        headerName, headerValue,
                         bodyMethods = ['POST', 'PUT', 'PATCH'],
                         body = transaction.requestBody,
                         contentType = self._getRequestContentType(transaction),
@@ -231,15 +236,20 @@ window.LI = window.LI || {};
 
                     // Add X-headers.
                     if (transaction.requestHeaders) {
+
                         transaction.requestHeaders.forEach(function(header) {
 
-                            if (-1 === header.name.indexOf('X-DevTools-Emulate-Network-Conditions-Client-Id')) {
-                              if (0 === header.name.indexOf('X-')) {
-                                  headers[header.name] = header.value;
-                              } else if (0 === header.name.indexOf('Authorization')) {
-                                  headers[header.name] = header.value;
-                              }
+                          headerName = header.name;
+                          headerValue = header.value;
+
+                          if (-1 === headerName.indexOf('X-DevTools-Emulate-Network-Conditions-Client-Id')) {
+
+                            if (0 === headerName.indexOf('X-') || 0 === headerName.indexOf('Authorization')) {
+                              headers[headerName] = escapeContent(headerValue);
                             }
+
+                          }
+
                         });
                     }
 
@@ -276,7 +286,7 @@ window.LI = window.LI || {};
                             } else {
                                 if (body && body[0] && body[0].bytes) {
                                   var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
-                                  requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
+                                  requestIR.push(['data', '"' + escapeContent(bodyAsString) + '"']);
                                 }
                             }
                         }
