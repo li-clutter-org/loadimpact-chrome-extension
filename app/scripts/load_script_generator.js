@@ -24,7 +24,17 @@ window.LI = window.LI || {};
     var PAGE_MATCH_THRESHOLD = 1000;
 
     var escapeContent = function(input) {
-      return input && input.replace(/"/g, '\\\"').replace(/[\r\n]/g, "");
+      if (input) {
+
+        // " --> \" (escape doublequote)
+        input = input.replace(/"/g, '\\\"');
+
+        //  This replace fixes content which contains a doublequote string
+        //  \"  - (first replace) -> \\" - (second replace to work in LUA) -> \\\"
+        input = input.replace(/\\\\"/g, '\\\\\\\"');
+        input = input.replace(/[\r\n]/g, "");
+      }
+      return input;
     };
 
     LI.LoadScriptGenerator = function() {
