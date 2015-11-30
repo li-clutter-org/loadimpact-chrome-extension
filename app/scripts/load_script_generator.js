@@ -23,6 +23,20 @@ window.LI = window.LI || {};
     var BATCH_THRESHOLD = 3000;
     var PAGE_MATCH_THRESHOLD = 1000;
 
+    var escapeContent = function(input) {
+      if (input) {
+
+        // " --> \" (escape doublequote)
+        input = input.replace(/"/g, '\\\"');
+
+        //  This replace fixes content which contains a doublequote string
+        //  \"  - (first replace) -> \\" - (second replace to work in LUA) -> \\\"
+        input = input.replace(/\\\\"/g, '\\\\\\\"');
+        input = input.replace(/[\r\n]/g, "");
+      }
+      return input;
+    };
+
     LI.LoadScriptGenerator = function() {
         this.lastPage = 0;
     };
@@ -112,7 +126,7 @@ window.LI = window.LI || {};
     LI.LoadScriptGenerator.prototype._convertFormDataToBodyData = function(formData) {
         var params = [];
         Object.keys(formData).forEach(function(key) {
-            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(formData[key][0]));
+            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(formData[key][0]).replace(new RegExp('%20', 'g'), '+'));
         });
         return params.join('&');
     };
@@ -204,36 +218,74 @@ window.LI = window.LI || {};
                 node[1].forEach(function(transaction) {
                     var method = transaction.method.toUpperCase(),
                         headers = {},
-                        bodyMethods = ['POST', 'PUT'],
+                        headerName, headerValue,
+                        bodyMethods = ['POST', 'PUT', 'PATCH'],
                         body = transaction.requestBody,
                         contentType = self._getRequestContentType(transaction),
-                        base64ContentTypes = ['multipart/form-data', 'application/x-amf'],
+                        base64ContentTypes = ['application/octet-stream',
+                                              'application/pdf',
+                                              'application/x-amf',
+                                              'application/x-compress',
+                                              'application/x-compressed',
+                                              'application/x-shockwave-flash',
+                                              'application/x-zip-compressed',
+                                              'application/zip',
+                                              'audio/mpeg3',
+                                              'audio/x-mpeg-3',
+                                              'audio/wav',
+                                              'audio/x-wav',
+                                              'image/bmp',
+                                              'image/x-windows-bmp',
+                                              'image/gif',
+                                              'image/jpeg',
+                                              'image/pjpeg',
+                                              'image/png',
+                                              'image/tiff',
+                                              'multipart/form-data'],
                         requestIR = [method, transaction.url];
 
                     // Add X-headers.
                     if (transaction.requestHeaders) {
+
                         transaction.requestHeaders.forEach(function(header) {
-                            if (0 === header.name.indexOf('X-')) {
-                                headers[header.name] = header.value;
-                            } else if (0 === header.name.indexOf('Authorization')) {
-                                headers[header.name] = header.value;
+
+                          headerName = header.name;
+                          headerValue = header.value;
+
+                          if (-1 === headerName.indexOf('X-DevTools-Emulate-Network-Conditions-Client-Id')) {
+
+                            if (0 === headerName.indexOf('X-') || 0 === headerName.indexOf('Authorization')) {
+                              headers[headerName] = escapeContent(headerValue);
                             }
+
+                          }
+
                         });
                     }
 
                     // Handle request body.
-                    if (transaction.requestBody && transaction.requestBody !== '') {
-                        var shouldBase64Body = false;
-                        if ($.inArray(method, bodyMethods) &&
-                            '' !== contentType &&
-                            $.inArray(contentType, base64ContentTypes)) {
-                            shouldBase64Body = true;
-                        } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
-                            shouldBase64Body = true;
-                        }
+                    if (body && body !== '') {
 
                         headers['Content-Type'] = contentType;
                         requestIR.push(['headers', headers]);
+
+
+                        var shouldBase64Body = false;
+                        var isArrayBuffer = (body instanceof Array &&
+                                             body[0] && body[0].bytes &&
+                                             body[0].bytes instanceof ArrayBuffer);
+
+
+                        if (!isArrayBuffer) {
+                          if ($.inArray(method, bodyMethods) &&
+                              '' !== contentType &&
+                              $.inArray(contentType, base64ContentTypes)) {
+                              shouldBase64Body = true;
+                          } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
+                              shouldBase64Body = true;
+                          }
+                        }
+
 
                         if (shouldBase64Body) {
                             requestIR.push(['data', '"' + btoa(body[0].bytes) + '"']);
@@ -242,8 +294,10 @@ window.LI = window.LI || {};
                             if ($.isPlainObject(body)) {
                                 requestIR.push(['data', '"' + self._convertFormDataToBodyData(body) + '"']);
                             } else {
-                                var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
-                                requestIR.push(['data', '"' + bodyAsString.replace(/"/g, '\\\"').replace(/[\r\n]/g, "") + '"']);
+                                if (body && body[0] && body[0].bytes) {
+                                  var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
+                                  requestIR.push(['data', '"' + escapeContent(bodyAsString) + '"']);
+                                }
                             }
                         }
                     } else if (Object.keys(headers).length) {

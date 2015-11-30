@@ -62,6 +62,7 @@ LI.EditorController = Ember.ObjectController.extend({
                 url: this.get('apiUrl') + 'user-scenarios/',
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader('Authorization', 'Basic ' + btoa(self.get('apiToken') + ':'));
+                    xhr.setRequestHeader('X-Load-Impact-Agent', 'LoadImpactChromePlugin');
                 },
                 contentType: 'application/json; charset=UTF-8',
                 dataType: 'json',
@@ -119,8 +120,7 @@ LI.EditorController = Ember.ObjectController.extend({
 
         continueEditingOnSite: function() {
             window.continueEditingOnSite = true;
-            window.location.href = ('https://loadimpact.com/test/user-scenario/list?s=' +
-                                    this.get('savedUserScenarioId'));
+            window.location.href = ('https://app.loadimpact.com/user-scenarios/' +this.get('savedUserScenarioId'));
         }
     },
 });

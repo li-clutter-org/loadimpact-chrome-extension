@@ -22,23 +22,23 @@ require('app/lib/bootstrap/js/collapse');
 'use strict';
 
 LI.Router.map(function() {
-    this.route('popup');
+  this.route('popup');
 });
 
 LI.IndexRoute = Ember.Route.extend({
-    beforeModel: function() {
-        this.transitionTo('popup');
-    }
+  beforeModel: function() {
+      this.transitionTo('popup');
+  }
 });
 
 LI.PopupRoute = Ember.Route.extend({
-    model: function () {
-        return this.get('store').find('options', 1);
-    },
+  model: function () {
+      return this.get('store').find('options', 1);
+  },
 
-    setupController: function(controller, model) {
-        controller.set('model', model);
-    }
+  setupController: function(controller, model) {
+      controller.set('model', model);
+  }
 });
 
 LI.PopupController = Ember.ObjectController.extend({
@@ -47,41 +47,31 @@ LI.PopupController = Ember.ObjectController.extend({
     recordingInAnotherTab: false,
 
     actions: {
-        goToAccount: function() {
-            chrome.tabs.create({ url: 'https://loadimpact.com/account' }); 
-        },
+      pause: function() {
+          if (this.get('recording') && !this.get('paused')) {
+              this.pause();
+              this.set('paused', true);
+          }
+      },
 
-        pause: function() {
-            if (this.get('recording') && !this.get('paused')) {
-                this.pause();
-                this.set('paused', true);
-            }
-        },
+      reset: function() {
+          this.reset();
+          this.set('recording', false);
+          this.set('paused', false);
+      },
 
-        reset: function() {
-            this.reset();
-            this.set('recording', false);
-            this.set('paused', false);
-        },
-
-        saveToken: function() {
-            this.set('apiToken', $('#api-token').val());
-            this.get('content').save();
-            $('#success').removeClass('hidden');
-        },
-
-        toggleRecording: function() {
-            if (this.get('recording') && !this.get('paused')) {
-                this.stop();
-                this.set('recording', false);
-                this.set('paused', false);
-            } else {
-                this.get('content').save();
-                this.start();
-                this.set('recording', true);
-                this.set('paused', false);
-            }
-        }
+      toggleRecording: function() {
+          if (this.get('recording') && !this.get('paused')) {
+              this.stop();
+              this.set('recording', false);
+              this.set('paused', false);
+          } else {
+              this.get('content').save();
+              this.start();
+              this.set('recording', true);
+              this.set('paused', false);
+          }
+      }
     },
 
     pause: function() {

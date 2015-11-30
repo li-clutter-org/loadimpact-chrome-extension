@@ -169,7 +169,7 @@ module.exports = function (grunt) {
             },
             dist: {
                 options: {
-                    compress: true,
+                    compress: false,
                     mangle: true
                 },
                 files: {
