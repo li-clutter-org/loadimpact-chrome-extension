@@ -11,6 +11,9 @@
 
                 {{#if recordingInAnotherTab}}
                     <div class="alert alert-info"><strong>Already recording!</strong> You are already recording in another tab. You need to stop that recording in order to start a new one.</div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-lg btn-danger" {{action cancelCurrentRecording}}><span class="glyphicon glyphicon-stop"></span> Stop recording</button>
+                    </div>
                 {{else}}
                     <div>
                         {{#if recording}}

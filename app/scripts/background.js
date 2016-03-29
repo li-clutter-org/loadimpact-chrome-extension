@@ -111,6 +111,16 @@ function onRequest(request, sender, sendResponse) {
             recording: recorder.recording,
         });
         return;
+
+    } else if ('cancel-current-recording' === request.type) {
+
+        recorder.stop(recorder.recordingTab);
+        recorder.resetRecorder();
+
+        sendResponse({
+          recordingTab: recorder.recordingTab
+        });
+        return;
     }
 
     // Return nothing to let the connection be cleaned up.

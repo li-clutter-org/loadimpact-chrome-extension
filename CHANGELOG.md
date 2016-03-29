@@ -1,4 +1,7 @@
 
+### 1.0.9-20162903
+- [fix] Allow to cancel recording of another browser tab
+
 ### 1.0.8-20151130
 - [fix] Strings with backslash-escaped double quotes are
   correctly converted to LUA code
