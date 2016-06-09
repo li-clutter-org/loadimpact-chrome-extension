@@ -1,5 +1,9 @@
 
-### 1.0.9-20162903
+### 1.0.10-20160609
+
+- [fix] Base64 encode non-printable characters when body isArrayBuffer data and Content-Type header is not specified
+
+### 1.0.9-20160329
 - [fix] Allow to cancel recording of another browser tab
 
 ### 1.0.8-20151130

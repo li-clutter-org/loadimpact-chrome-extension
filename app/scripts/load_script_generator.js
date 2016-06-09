@@ -32,7 +32,7 @@ window.LI = window.LI || {};
         //  This replace fixes content which contains a doublequote string
         //  \"  - (first replace) -> \\" - (second replace to work in LUA) -> \\\"
         input = input.replace(/\\\\"/g, '\\\\\\\"');
-        input = input.replace(/[\r\n]/g, "");
+        input = input.replace(/[\f\v\t\r\n]/g, "");
       }
       return input;
     };
@@ -275,28 +275,38 @@ window.LI = window.LI || {};
                                              body[0] && body[0].bytes &&
                                              body[0].bytes instanceof ArrayBuffer);
 
+                        if (!isArrayBuffer && $.inArray(method, bodyMethods) && '' !== contentType && $.inArray(contentType, base64ContentTypes)) {
+                          shouldBase64Body = true;
+                        } else {
 
-                        if (!isArrayBuffer) {
-                          if ($.inArray(method, bodyMethods) &&
-                              '' !== contentType &&
-                              $.inArray(contentType, base64ContentTypes)) {
-                              shouldBase64Body = true;
-                          } else if (/[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(body)) { // Look for binary data.
-                              shouldBase64Body = true;
-                          }
+                          //http://stackoverflow.com/questions/1677644/detect-non-printable-characters-in-javascript
+                          //
+                          // Non printable characters will break the script output.
+                          //
+                          // Non printable characters must be escaped. Because they usually are binary data,
+                          // the data is encoded as base64
+
+                          var text = isArrayBuffer ? String.fromCharCode.apply(null, new Uint8Array(body[0].bytes)) : body;
+                          shouldBase64Body = /[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(text);
                         }
 
 
+
                         if (shouldBase64Body) {
-                            requestIR.push(['data', '"' + btoa(body[0].bytes) + '"']);
+
+                            var bodyContent = isArrayBuffer ? String.fromCharCode.apply(null, new Uint8Array(body[0].bytes)) : body[0].bytes;
+
+                            requestIR.push(['data', '"' + btoa(bodyContent) + '"']);
                             requestIR.push(['base64_encoded_body', 'true']);
                         } else {
                             if ($.isPlainObject(body)) {
                                 requestIR.push(['data', '"' + self._convertFormDataToBodyData(body) + '"']);
                             } else {
                                 if (body && body[0] && body[0].bytes) {
+
                                   var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
                                   requestIR.push(['data', '"' + escapeContent(bodyAsString) + '"']);
+
                                 }
                             }
                         }
