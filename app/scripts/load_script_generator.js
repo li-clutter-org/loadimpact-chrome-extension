@@ -32,7 +32,7 @@ window.LI = window.LI || {};
         //  This replace fixes content which contains a doublequote string
         //  \"  - (first replace) -> \\" - (second replace to work in LUA) -> \\\"
         input = input.replace(/\\\\"/g, '\\\\\\\"');
-        input = input.replace(/[\f\v\t\r\n]/g, "");
+        input = input.replace(/[\r\n]/g, "");
       }
       return input;
     };
