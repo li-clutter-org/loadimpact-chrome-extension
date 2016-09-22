@@ -59,6 +59,7 @@ window.LI = window.LI || {};
         transactions.forEach(function(transaction) {
             var time = transaction.timeStamp;
 
+
             // Determine if this transaction represents a new page.
             if (self._isTransactionNewPage(transaction)) {
                 // Close batch, if open.
@@ -210,10 +211,30 @@ window.LI = window.LI || {};
 
     LI.LoadScriptGenerator.prototype._compileIRToLua = function(ir) {
         var self = this,
+            isFirstBatch = true,
+            isFirstRequest = true,
             script = '';
+
+        script += '-- The chrome extension has recorded all your HTTP traffic to generate this user scenario script.\n';
+        script += '-- You can use this user scenario in your load tests to simulate your user traffic.\n';
+        script +=  '\n\n';
+        script += '-- You will likely have to modify this script to:\n';
+        script += '--   1) Rename the page name `http.page_start/http.page_end` to help during result analysis.\n';
+        script += '--   2) Setup more accurate sleep time `client.sleep`. Sleep time is important, because real users do go idle on pages, depending on content.\n';
+        script += '--   3) Extracting and correlating CSRF tokens or dynamic values.\n';
+        script += '--   4) Adding custom metrics, logs, custom logic...\n';
+        script += '\n\n';
+        script += '-- A script validation launches 1 Virtual User to run your user scenario; it shows logs, warnings and errors.\n';
+        script += '\n\n';
+
         ir.forEach(function(node) {
             if ('batch' === node[0]) {
-                script += "http.request_batch({\n";
+
+                if (isFirstBatch) {
+                  script += "responses = http.request_batch({\n";
+                } else {
+                  script += "http.request_batch({\n";
+                }
                 var requests = [];
                 node[1].forEach(function(transaction) {
                     var method = transaction.method.toUpperCase(),
@@ -314,13 +335,46 @@ window.LI = window.LI || {};
                         requestIR.push(['headers', headers]);
                     }
 
+
                     // Add compression handling.
                     requestIR.push(['auto_decompress', 'true']);
+
+                    if (isFirstRequest) {
+                      requestIR.push(['response_body_bytes', 1024]);
+                      isFirstRequest = false;
+                    }
 
                     // Compile request IR into a Lua string.
                     requests.push("\t{" + self._compileRequestIRToLua(requestIR) + "}");
                 });
-                script += requests.join(",\n") + "\n})\n\n";
+
+
+                if (isFirstBatch) {
+
+                  if (requests.length) {
+                    var firstRequests = requests.splice(0, 1);
+                    script += firstRequests.join(",\n") + "\n})\n\n";
+
+                    script += '\n\n\n';
+                    script += '-- Use `response_body_bytes` parameter to access response body or use `http.set_option()`\n';
+                    script += '-- ** Feel free to remove the line of code below\n';
+                    script += 'log.debug(\"FirstRequestBody: \"..responses[1].body)\n';
+                    script += '\n';
+                    script += '-- Report any specific data with `result.custom_metric`\n';
+                    script += '-- ** Feel free to remove the line of code below\n';
+                    script += 'result.custom_metric("TTFB-FirstRequest", responses[1].time_to_first_byte)\n';
+                    script += '\n\n\n';
+
+                    if (requests.length) {
+                      script += requests.join(",\n") + "\n})\n\n";
+                    }
+                  }
+
+                  isFirstBatch = false;
+
+                } else {
+                  script += requests.join(",\n") + "\n})\n\n";
+                }
             } else if ('pageStart' === node[0]) {
                 script += 'http.page_start("' + node[1] + '")\n';
             } else if ('pageEnd' === node[0]) {
