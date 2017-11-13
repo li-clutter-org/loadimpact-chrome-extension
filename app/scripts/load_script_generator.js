@@ -23,6 +23,17 @@ window.LI = window.LI || {};
     var BATCH_THRESHOLD = 3000;
     var PAGE_MATCH_THRESHOLD = 1000;
 
+    var utf8ArrayToStr = function(array) {
+      // avoid Maximum call stack size exceeded
+      ///https://stackoverflow.com/questions/8936984/uint8array-to-string-in-javascript
+      //https://bugs.webkit.org/show_bug.cgi?id=80797
+      if (array.length < 65000) {
+        return String.fromCharCode.apply(null, new Uint8Array(array));
+      } else {
+        return "";
+      }
+    };
+
     var escapeContent = function(input) {
       if (input) {
 
@@ -307,7 +318,7 @@ window.LI = window.LI || {};
                           // Non printable characters must be escaped. Because they usually are binary data,
                           // the data is encoded as base64
 
-                          var text = isArrayBuffer ? String.fromCharCode.apply(null, new Uint8Array(body[0].bytes)) : body;
+                          var text = isArrayBuffer ? utf8ArrayToStr(body[0].bytes) : body;
                           shouldBase64Body = /[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(text);
                         }
 
@@ -315,7 +326,7 @@ window.LI = window.LI || {};
 
                         if (shouldBase64Body) {
 
-                            var bodyContent = isArrayBuffer ? String.fromCharCode.apply(null, new Uint8Array(body[0].bytes)) : body[0].bytes;
+                            var bodyContent = isArrayBuffer ? utf8ArrayToStr(body[0].bytes) : body[0].bytes;
 
                             requestIR.push(['data', '"' + btoa(bodyContent) + '"']);
                             requestIR.push(['base64_encoded_body', 'true']);
@@ -325,7 +336,7 @@ window.LI = window.LI || {};
                             } else {
                                 if (body && body[0] && body[0].bytes) {
 
-                                  var bodyAsString = String.fromCharCode.apply(null, new Uint8Array(body[0].bytes));
+                                  var bodyAsString = utf8ArrayToStr(body[0].bytes);
                                   requestIR.push(['data', '"' + escapeContent(bodyAsString) + '"']);
 
                                 }
