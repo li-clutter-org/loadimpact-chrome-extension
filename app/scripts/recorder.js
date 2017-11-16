@@ -26,6 +26,7 @@ window.LI = window.LI || {};
         this.requests = {};
         this.startTime = 0;
         this.endTime = 0;
+        this.LOG = false;
         this.onBeforeRequestCb = $.proxy(this._onBeforeRequest, this);
         this.onBeforeSendHeadersCb = $.proxy(this._onBeforeSendHeaders, this);
         this.onResponseStartedCb = $.proxy(this._onResponseStarted, this);
@@ -96,23 +97,25 @@ window.LI = window.LI || {};
         var urls = urlIncludePatterns.split(','),
             cleanedUrls = [];
         urls.forEach(function(url) {
-            cleanedUrls.push(url.replace(/^\s+|\s+$/g, ''));
+          url = url.replace(/^\s+|\s+$/g, '');
+          cleanedUrls.push(url);
         });
 
-        var requestFilter = {
-            tabId: tabId,
+        var filter = {
+          //TODO: this filter looks not to be working well on page
+          //moved the filter to _onBeforeRequest
+            //tabId: tabId,
             urls: cleanedUrls
         };
 
-        chrome.webRequest.onBeforeRequest.addListener(
-            this.onBeforeRequestCb, requestFilter, ['requestBody']);
-        chrome.webRequest.onBeforeSendHeaders.addListener(
-            this.onBeforeSendHeadersCb, requestFilter, ['requestHeaders']);
-        chrome.webRequest.onResponseStarted.addListener(
-            this.onResponseStartedCb, requestFilter, ['responseHeaders']);
-        chrome.webRequest.onCompleted.addListener(
-            this.onCompleteCb, requestFilter, ['responseHeaders']);
         this.recordingTab = tabId;
+
+        var wr = chrome.webRequest;
+        wr.onBeforeRequest.addListener(this.onBeforeRequestCb, filter, ['requestBody']);
+        wr.onBeforeSendHeaders.addListener(this.onBeforeSendHeadersCb, filter, ['requestHeaders']);
+        wr.onResponseStarted.addListener(this.onResponseStartedCb, filter, ['responseHeaders']);
+        wr.onCompleted.addListener(this.onCompleteCb, filter, ['responseHeaders']);
+
         this.recording = true;
         this.startTime = (new Date()).getTime();
         LI.getIconInstance().setRecordingIcon(tabId);
@@ -125,14 +128,24 @@ window.LI = window.LI || {};
     };
 
     LI.Recorder.prototype._onBeforeRequest = function(details) {
+
+      if (this.recordingTab === details.tabId) {
         if (this.requests[details.requestId]) {
             this.requests[details.requestId].redirected = true;
         } else {
             this.requests[details.requestId] = details;
         }
+      }
+
+      if (this.LOG) {
+        var log = (this.recordingTab === details.tabId) ? console.log : console.error;
+        log(details.tabId + ': ' + details.url);
+      }
+
     };
 
     LI.Recorder.prototype._onBeforeSendHeaders = function(details) {
+
         if (this.requests[details.requestId] && !this.requests[details.requestId].redirected) {
             this.requests[details.requestId].requestHeaders = details.requestHeaders;
         }
