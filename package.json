@@ -1,6 +1,6 @@
 {
   "name": "load-impact-user-scenario-recorder",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "dependencies": {},
   "devDependencies": {
     "grunt": "0.4.2",

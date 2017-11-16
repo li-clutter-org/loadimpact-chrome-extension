@@ -1,4 +1,14 @@
 
+### 1.0.13-20171116
+
+- [fix] Fix `tabId` filter was not working correctly and requests were not recorded
+
+### 1.0.12-20171113
+
+- [fix] Fix issue with `out of range` body size
+
+### 1.0.11-20160922
+
 - [feat] Add onboarding code and comments to the generated user scenario
 
 ### 1.0.10-20160609
