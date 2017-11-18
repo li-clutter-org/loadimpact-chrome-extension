@@ -1,4 +1,8 @@
 
+### 1.0.14-20171118
+
+- [fix] Refactor the fix with `out of range` body size
+
 ### 1.0.13-20171116
 
 - [fix] Fix `tabId` filter was not working correctly and requests were not recorded

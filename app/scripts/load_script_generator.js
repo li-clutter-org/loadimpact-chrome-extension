@@ -27,11 +27,13 @@ window.LI = window.LI || {};
       // avoid Maximum call stack size exceeded
       ///https://stackoverflow.com/questions/8936984/uint8array-to-string-in-javascript
       //https://bugs.webkit.org/show_bug.cgi?id=80797
-      if (array.length < 65000) {
-        return String.fromCharCode.apply(null, new Uint8Array(array));
-      } else {
-        return "";
+      var result;
+      try {
+        result = String.fromCharCode.apply(null, new Uint8Array(array));
+      } catch (e) {
+        result = "";
       }
+      return result;
     };
 
     var escapeContent = function(input) {
