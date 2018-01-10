@@ -1,3 +1,6 @@
+### 1.0.15-20180110
+
+- [fix] Escape backslashes in URLs
 
 ### 1.0.14-20171118
 
