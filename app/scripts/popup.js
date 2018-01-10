@@ -71,7 +71,26 @@ LI.PopupController = Ember.ObjectController.extend({
               this.set('recording', true);
               this.set('paused', false);
           }
+      },
+
+      cancelCurrentRecording: function() {
+
+        var self = this,
+            msg = {type: 'cancel-current-recording'};
+
+        chrome.extension.sendRequest(msg, function(response) {
+
+          self.setProperties({
+            recording: false,
+            recordingInAnotherTab: false,
+            paused: false
+          });
+
+        });
+
+
       }
+
     },
 
     pause: function() {
