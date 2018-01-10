@@ -36,6 +36,15 @@ window.LI = window.LI || {};
       return result;
     };
 
+    var escapeUrl = function(input) {
+      if (input) {
+
+        // \[^"] --> \\[^"] (escape backslashes to work in Lua)
+        input = input.replace(/\\([^"])/g, '\\\\$1');
+      }
+      return input;
+    };
+
     var escapeContent = function(input) {
       if (input) {
 
@@ -43,7 +52,7 @@ window.LI = window.LI || {};
         input = input.replace(/"/g, '\\\"');
 
         //  This replace fixes content which contains a doublequote string
-        //  \"  - (first replace) -> \\" - (second replace to work in LUA) -> \\\"
+        //  \"  - (first replace) -> \\" - (second replace to work in Lua) -> \\\"
         input = input.replace(/\\\\"/g, '\\\\\\\"');
         input = input.replace(/[\r\n]/g, "");
       }
@@ -276,7 +285,7 @@ window.LI = window.LI || {};
                                               'image/png',
                                               'image/tiff',
                                               'multipart/form-data'],
-                        requestIR = [method, transaction.url];
+                        requestIR = [method, escapeUrl(transaction.url)];
 
                     // Add X-headers.
                     if (transaction.requestHeaders) {
