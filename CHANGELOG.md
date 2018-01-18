@@ -1,3 +1,8 @@
+
+### 1.0.16-20180118
+
+- [fix] Request data should never be limited to 4096 characters
+
 ### 1.0.15-20180110
 
 - [fix] Escape backslashes in URLs

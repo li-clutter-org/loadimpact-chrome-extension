@@ -23,15 +23,17 @@ window.LI = window.LI || {};
     var BATCH_THRESHOLD = 3000;
     var PAGE_MATCH_THRESHOLD = 1000;
 
-    var utf8ArrayToStr = function(array) {
+    var utf8ArrayToStr = function(body) {
+      var result = "";
       // avoid Maximum call stack size exceeded
       ///https://stackoverflow.com/questions/8936984/uint8array-to-string-in-javascript
       //https://bugs.webkit.org/show_bug.cgi?id=80797
-      var result;
       try {
-        result = String.fromCharCode.apply(null, new Uint8Array(array));
+        for (var i=0; i<body.length; i++) {
+          result += String.fromCharCode.apply(null, new Uint8Array(body[i].bytes));
+        }
       } catch (e) {
-        result = "";
+        result = ""
       }
       return result;
     };
@@ -329,7 +331,7 @@ window.LI = window.LI || {};
                           // Non printable characters must be escaped. Because they usually are binary data,
                           // the data is encoded as base64
 
-                          var text = isArrayBuffer ? utf8ArrayToStr(body[0].bytes) : body;
+                          var text = isArrayBuffer ? utf8ArrayToStr(body) : body;
                           shouldBase64Body = /[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(text);
                         }
 
@@ -337,7 +339,7 @@ window.LI = window.LI || {};
 
                         if (shouldBase64Body) {
 
-                            var bodyContent = isArrayBuffer ? utf8ArrayToStr(body[0].bytes) : body[0].bytes;
+                            var bodyContent = isArrayBuffer ? utf8ArrayToStr(body) : body[0].bytes;
 
                             requestIR.push(['data', '"' + btoa(bodyContent) + '"']);
                             requestIR.push(['base64_encoded_body', 'true']);
@@ -347,7 +349,7 @@ window.LI = window.LI || {};
                             } else {
                                 if (body && body[0] && body[0].bytes) {
 
-                                  var bodyAsString = utf8ArrayToStr(body[0].bytes);
+                                  var bodyAsString = utf8ArrayToStr(body);
                                   requestIR.push(['data', '"' + escapeContent(bodyAsString) + '"']);
 
                                 }
