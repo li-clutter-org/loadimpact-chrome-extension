@@ -1,3 +1,11 @@
+### 1.0.17-20190305
+
+- [fix] Change extension name to clarify tie to Load Impact v3.0
+
+### 1.0.16-20180118
+
+- [fix] Request data should never be limited to 4096 characters
+
 ### 1.0.15-20180110
 
 - [fix] Escape backslashes in URLs

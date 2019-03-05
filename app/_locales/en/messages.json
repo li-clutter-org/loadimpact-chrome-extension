@@ -1,14 +1,14 @@
 {
     "appName": {
-        "message": "Load Impact User Scenario Recorder",
+        "message": "Load Impact v3.0 - Lua User Scenario Recorder",
         "description": "The name of the application"
     },
     "appShortName": {
-        "message": "Load Impact Recorder",
+        "message": "Load Impact v3.0 Recorder",
         "description": "The short name of the application"
     },
     "appDescription": {
-        "message": "Record user scenario sessions right from the browser, automatically uploaded to your Load Impact account.",
+        "message": "Record user scenario sessions right from the browser, automatically uploaded to your Load Impact account (only for use with v3.0 product, there's a new separate extension for v4.0).",
         "description": "The description of the application"
     }
 }
