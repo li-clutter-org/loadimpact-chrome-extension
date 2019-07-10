@@ -1,3 +1,7 @@
+### 1.0.18-20190710
+
+- [fix] Change extension name to clarify Deprecation
+
 ### 1.0.17-20190305
 
 - [fix] Change extension name to clarify tie to Load Impact v3.0
